@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: [windows-latest, ubuntu-latest, macos-latest]
+    name: CI
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        path: 'source'
+        fetch-depth: 0
+
+    - name: Checkout tools repo
+      uses: actions/checkout@v4
+      with:
+        repository: cristianadam/HelloWorld.git
+        path: HelloWorld
+
+    - name: Use sccache action
+      uses: ./source/
+      with:
+        key: MyKey-0
+
+    - name: Configure and build HelloWorld
+      working-directory: ${{github.workspace}}/HelloWorld
+      shell: bash
+      run: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache ../
+        cmake --build .
+
+    - name: Stop and check sccache
+      shell: bash
+      run: sccache --show-stats
