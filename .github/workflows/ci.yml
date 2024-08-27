@@ -30,10 +30,10 @@ jobs:
         path: 'source'
         fetch-depth: 0
 
-    - name: Checkout tools repo
+    - name: Checkout HelloWorld
       uses: actions/checkout@v4
       with:
-        repository: cristianadam/HelloWorld.git
+        repository: cristianadam/HelloWorld
         path: HelloWorld
 
     - name: Use sccache action
