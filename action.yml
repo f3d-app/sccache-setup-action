@@ -7,10 +7,21 @@ inputs:
   key:
     description: 'Cache key to differentiate between caches'
     required: true
+  install_linux:
+    description: 'Install sccache on linux'
+    required: false
+    default: 'true'
 
 runs:
   using: "composite"
   steps:
+
+    - name: Install sccache Linux
+      if: |
+        runner.os == 'Linux' &&
+        ${{ inputs.install_linux == 'true' }}
+      shell: cmd
+      run: cargo install sccache
 
     - name: Install sccache Windows
       if: runner.os == 'Windows'

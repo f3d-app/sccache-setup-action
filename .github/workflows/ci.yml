@@ -21,7 +21,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13]
 
     runs-on: ${{matrix.os}}
-    container: ${{ matrix.os == 'ubuntu-latest' && 'ghcr.io/f3d-app/f3d-ci' || null }}
 
     steps:
 
@@ -51,6 +50,8 @@ jobs:
         cmake -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache ../
         cmake --build .
 
-    - name: Stop and check sccache
+    - name: Show and check sccache
       shell: bash
-      run: sccache --show-stats
+      run: |
+        sccache --show-stats
+        sccache --show-stats | grep "Compile requests" | grep 1 | grep ''
