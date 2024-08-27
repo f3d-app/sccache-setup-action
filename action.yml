@@ -15,8 +15,7 @@ runs:
     - name: Install sccache Windows
       if: runner.os == 'Windows'
       shell: cmd
-      run: |
-        choco install sccache
+      run: choco install sccache
 
     - name: Install sccache MacOS
       if: runner.os == 'macOS'
