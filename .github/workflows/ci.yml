@@ -55,4 +55,4 @@ jobs:
       shell: bash
       run: |
         sccache --show-stats
-        sccache --show-stats | grep "Compile requests" | grep 1 | grep ''
+        sccache --show-stats | grep "Compile requests" | grep 2 | grep ''
