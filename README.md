@@ -16,6 +16,19 @@ Example usage:
       key: MyKey-0
 ```
 
+
+Then during the configuration of your build, add sccache as a launcher, eg, for CMake:
+
+```
+  - name: Configure
+    working-directory: ${{github.workspace}}/build
+    shell: bash
+    run: >
+      cmake ../source
+      -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+      -DCMAKE_C_COMPILER_LAUNCHER=sccache
+```
+
 Resulting caches can be seen in your actions tab.
 
 To check the sccache action is behaving as expected, it is possible to add the following at the end of your job:
