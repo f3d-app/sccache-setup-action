@@ -16,8 +16,6 @@ Example usage:
       key: MyKey-0
 ```
 
-
-
 Then during the configuration of your build, add sccache as a launcher, eg, for CMake:
 
 ```
@@ -39,3 +37,6 @@ To check the sccache action is behaving as expected, it is possible to add the f
     shell: bash
     run: sccache --show-stats
 ```
+
+Please note sccache does not work with Visual Studio Generator on Windows but requires ninja-build in that case:
+https://github.com/mozilla/sccache/issues/957

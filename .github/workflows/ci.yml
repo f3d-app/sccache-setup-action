@@ -53,14 +53,24 @@ jobs:
       with:
         key: MyKey-0
 
-    - name: Configure and build HelloWorld
+    - name: Setup directories
       working-directory: ${{github.workspace}}/HelloWorld
       shell: bash
-      run: |
-        mkdir build
-        cd build
-        cmake -GNinja -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache ../
-        cmake --build .
+      run: mkdir build
+
+    - name: Configure
+      working-directory: ${{github.workspace}}/HelloWorld/build
+      shell: bash
+      run: >
+        cmake ../
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache
+        ${{ runner.os == 'Windows' && '-G Ninja' || null }}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/HelloWorld/build
+      shell: bash
+      run: cmake --build .
 
     - name: Show and check sccache
       shell: bash
