@@ -59,7 +59,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache ../
+        cmake -GNinja -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache ../
         cmake --build .
 
     - name: Show and check sccache
