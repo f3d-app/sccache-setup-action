@@ -34,8 +34,9 @@ jobs:
     - name: Checkout HelloWorld
       uses: actions/checkout@v4
       with:
-        repository: cristianadam/HelloWorld
+        repository: f3d-app/HelloWorld
         path: HelloWorld
+        ref: v2.0.1
 
     - name: Install tools Windows
       if: runner.os == 'Windows'
