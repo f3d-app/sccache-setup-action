@@ -1,0 +1,42 @@
+name: 'Install and Setup sccache'
+description: 'Install and setup sccache'
+branding:
+  icon: 'arrow-up'
+  color: 'green'
+inputs:
+  key:
+    description: 'Cache key to differentiate between caches'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Install sccache Windows
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: choco install sccache
+
+    - name: Install sccache MacOS
+      if: runner.os == 'macOS'
+      shell: bash
+      run: brew install sccache
+
+    - name: Initialize sccache environnement
+      shell: bash
+      run: |
+        sccache --start-server
+        echo SCCACHE_CACHE=$(sccache --show-stats | grep Local | cut -d '"' -f2) >> $GITHUB_ENV
+        echo DATE_STRING=$(date +'%Y%m%d') >> $GITHUB_ENV
+        sccache --stop-server
+
+    - name: Recover sccache cache
+      uses: actions/cache@v4
+      with:
+        path: ${{env.SCCACHE_CACHE}}
+        key: sccache-cache-${{inputs.key}}-${{env.DATE_STRING}}
+        restore-keys: sccache-cache-${{inputs.key}}
+
+    - name: Start sccache
+      shell: bash
+      run: sccache --start-server

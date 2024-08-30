@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13]
+
+    runs-on: ${{matrix.os}}
+    container: ${{ matrix.os == 'ubuntu-latest' && 'ghcr.io/f3d-app/f3d-superbuild-ci' || null }}
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        path: 'source'
+        fetch-depth: 0
+
+    - name: Checkout HelloWorld
+      uses: actions/checkout@v4
+      with:
+        repository: f3d-app/HelloWorld
+        path: HelloWorld
+        ref: v2.0.1
+
+    - name: Install tools Windows
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: choco install ninja
+
+    - name: Setup msvc Windows
+      if: runner.os == 'Windows'
+      uses: TheMrMilchmann/setup-msvc-dev@v3
+      with:
+        arch: x64
+
+    - name: Use sccache action
+      uses: ./source/
+      with:
+        key: MyKey-0
+
+    - name: Setup directories
+      working-directory: ${{github.workspace}}/HelloWorld
+      shell: bash
+      run: mkdir build
+
+    - name: Configure
+      working-directory: ${{github.workspace}}/HelloWorld/build
+      shell: bash
+      run: >
+        cmake ../
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache
+        ${{ runner.os == 'Windows' && '-G Ninja' || null }}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/HelloWorld/build
+      shell: bash
+      run: cmake --build .
+
+    - name: Show and check sccache
+      shell: bash
+      run: |
+        sccache --show-stats
+        sccache --show-stats | grep "Compile requests executed" | grep 1 | grep ''
