@@ -26,13 +26,13 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: 'source'
         fetch-depth: 0
 
     - name: Checkout HelloWorld
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: f3d-app/HelloWorld
         path: HelloWorld
