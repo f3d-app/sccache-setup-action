@@ -31,7 +31,7 @@ runs:
         sccache --stop-server
 
     - name: Recover sccache cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ${{env.SCCACHE_CACHE}}
         key: sccache-cache-${{inputs.key}}-${{env.DATE_STRING}}
