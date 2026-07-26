@@ -45,7 +45,7 @@ jobs:
 
     - name: Setup msvc Windows
       if: runner.os == 'Windows'
-      uses: TheMrMilchmann/setup-msvc-dev@v4.0.0
+      uses: TheMrMilchmann/setup-msvc-dev@v4.1.0
       with:
         arch: x64
 
